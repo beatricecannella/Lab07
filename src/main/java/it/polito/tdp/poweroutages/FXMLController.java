@@ -4,6 +4,7 @@
 
 package it.polito.tdp.poweroutages;
 
+
 import java.net.URL;
 import java.util.ResourceBundle;
 import it.polito.tdp.poweroutages.model.Model;
@@ -54,5 +55,6 @@ public class FXMLController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	this.cmbNerc.getItems().addAll(model.getNercList());
     }
 }
