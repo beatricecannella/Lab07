@@ -41,8 +41,8 @@ public class PowerOutageDAO {
 	public List<PowerOutage> getPowerOutagesList() {
 
 		String sql = "SELECT id, event_type_id, tag_id, area_id, nerc_id, responsible_id, customers_affected, "
-				+ "MONTH(date_event_began) AS meseI, DAY(date_event_began) AS giorniI, HOUR(date_event_began) AS oreI, "
-				+ "MINUTE(date_event_began) AS minI, MONTH(date_event_finished) AS meseF, "
+				+ "YEAR(date_event_began) AS annoI, MONTH(date_event_began) AS meseI, DAY(date_event_began) AS giorniI, HOUR(date_event_began) AS oreI, "
+				+ "MINUTE(date_event_began) AS minI, YEAR(date_event_finished) AS annoF, MONTH(date_event_finished) AS meseF, "
 				+ "DAY(date_event_finished) AS giorniF, HOUR(date_event_finished) AS oreF, "
 				+ "MINUTE(date_event_finished) AS minF, demand_loss "
 				+ "FROM poweroutages";
@@ -69,12 +69,14 @@ public class PowerOutageDAO {
 				int giorniF= res.getInt("giorniF");
 				int oreF = res.getInt("oreF");
 				int minF = res.getInt("minF");
+				int annoI = res.getInt("annoI");
+				int annoF = res.getInt("annoF");
 				//LocalDate date_event_began= res.getDate("date_event_began").toLocalDate();
 				//LocalDate date_event_finished = res.getDate("date_event_finished").toLocalDate();
 				int demand_loss = res.getInt("demand_loss");
 				
 				
-				PowerOutage p = new PowerOutage(id, event_type_id, tag_id, area_id, nerc_id, responsible_id, customers_affected, meseI, giorniI, oreI, minI, meseF, giorniF, oreF, minF, demand_loss);
+				PowerOutage p = new PowerOutage(id, event_type_id, tag_id, area_id, nerc_id, responsible_id, customers_affected, annoI, meseI, giorniI, oreI, minI, annoF, meseF, giorniF, oreF, minF, demand_loss);
 				powerOutagesList.add(p);
 			}
 

@@ -1,6 +1,7 @@
 package it.polito.tdp.poweroutages.model;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class PowerOutage {
 	int id;
@@ -19,10 +20,11 @@ public class PowerOutage {
 	int demand_loss;
 	int meseI;
 	int meseF;
-	
+	int anno1;
+	int anno2;
 
 	public PowerOutage(int id, int event_type_id, int tag_id, int area_id, int nerc_id, int responsible_id,
-			int customers_affected, int meseI, int giorniI, int oreI, int minI, int meseF, int giorniF, int oreF, int minF, int demand_loss) {
+			int customers_affected, int anno1, int meseI, int giorniI, int oreI, int minI, int anno2, int meseF, int giorniF, int oreF, int minF, int demand_loss) {
 		super();
 		this.id = id;
 		this.event_type_id = event_type_id;
@@ -40,6 +42,8 @@ public class PowerOutage {
 		this.demand_loss = demand_loss;
 		this.meseI = meseI;
 		this.meseF = meseF;
+		this.anno1=anno1;
+		this.anno2=anno2;
 	}
 
 	public int getId() {
@@ -80,6 +84,40 @@ public class PowerOutage {
 
 	public void setNerc_id(int nerc_id) {
 		this.nerc_id = nerc_id;
+	}
+	
+	
+
+	public int getMeseI() {
+		return meseI;
+	}
+
+	public void setMeseI(int meseI) {
+		this.meseI = meseI;
+	}
+
+	public int getMeseF() {
+		return meseF;
+	}
+
+	public void setMeseF(int meseF) {
+		this.meseF = meseF;
+	}
+
+	public int getAnno1() {
+		return anno1;
+	}
+
+	public void setAnno1(int anno1) {
+		this.anno1 = anno1;
+	}
+
+	public int getAnno2() {
+		return anno2;
+	}
+
+	public void setAnno2(int anno2) {
+		this.anno2 = anno2;
 	}
 
 	public int getResponsible_id() {
@@ -158,11 +196,22 @@ public class PowerOutage {
 
 public int calcolaDifferenzaInMinuti(int meseI, int giorniI, int oreI, int minI, int meseF, int giorniF, int oreF, int minF){
 		int tot = 0;
+		LocalDateTime t;
+	
 		if(meseI == meseF) {
-		int giorniAMin = (giorniF -giorniI)*24*60;
-		int oreAMin = (oreF - oreI)*60;
-		int min = minF - minI;
-		tot = giorniAMin + oreAMin + min;
+			if(giorniI == giorniF) {
+		//int giorni = (giorniF -giorniI);
+		int ore = oreF - oreI;
+		int min = ore*60+(minF - minI);
+		tot =  ore+ min;
+			}
+			else {
+				if(giorniI-giorniF == 1) { //sono 2 gg consecutivi
+					int ore = (24-oreI) +oreF;
+					int min = ore*60 + (60-minI); 
+				}
+				
+				}
 		}
 		else {
 			//considero tutti i mesi da 30 g

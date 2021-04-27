@@ -6,7 +6,11 @@ public class TestModel {
 		
 		Model model = new Model();
 		System.out.println(model.getNercList());
-
+		
+		for(Nerc n : model.getNercList()) {
+			if(n.getValue().equals("MAAC")) {
+			System.out.println(model.doRicorsione(4, 200, n));
+		}}
 	}
 
 }
