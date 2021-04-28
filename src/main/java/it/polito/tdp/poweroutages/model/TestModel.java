@@ -9,7 +9,9 @@ public class TestModel {
 		
 		for(Nerc n : model.getNercList()) {
 			if(n.getValue().equals("MAAC")) {
+				System.out.println("inizio");
 			System.out.println(model.doRicorsione(4, 200, n));
+			System.out.println("fine");
 		}}
 	}
 

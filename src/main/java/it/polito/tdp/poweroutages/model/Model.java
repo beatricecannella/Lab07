@@ -34,7 +34,7 @@ public class Model {
 	
 	public List<PowerOutage> doRicorsione(int numAnni, int numOre, Nerc nerc){
 		soluzioneOttima = null;
-		LinkedList<PowerOutage> parziale = new LinkedList<PowerOutage>();
+		List<PowerOutage> parziale = new ArrayList<PowerOutage>();
 		powerFiltrata = new ArrayList<>();
 		
 		
@@ -43,73 +43,88 @@ public class Model {
 				powerFiltrata.add(p);
 			}
 		}
-		cerca(parziale, 0, numAnni, numOre, nerc);
+		
+		
+	//	System.out.println(powerFiltrata);
+		cerca(parziale, 0, numAnni, numOre);
 		
 		return soluzioneOttima;
 	}
 	
 	
-	private void cerca(LinkedList<PowerOutage> parziale, int livello, int numAnni, int numOre, Nerc nerc){
+	private void cerca(List<PowerOutage> parziale, int livello, int numAnni, int numOre){
 		//livello per noi è il numero di anni inseriti nella parziale
 		
 		// caso terminale
-		//livello == anno
-		if(livello == numAnni ) {
+		
+		if(livello == powerFiltrata.size()) {
+			return; //non ci sono piu powerOuages da aggiungere
+			}
+		
+		/*if(this.contaOre(parziale)>numOre) {
+			return;
+		}else {*/
 		 personeColpite = this.calcolaPersone(parziale);
 			
 			if(parziale == null || personeColpite > this.calcolaPersone(soluzioneOttima)) {
 				soluzioneOttima = new ArrayList<>(parziale);
+				
+			
 			}
-			return;
-		}
-		
-		else {
+	//	}
+	
 			for(PowerOutage p : this.powerFiltrata) {
-				if(this.soluzioneAmmissibile(p, parziale, numAnni, numOre) == true) {
-					parziale.add(p);
-					cerca(parziale, livello+1, numAnni, numOre, nerc);
+				parziale.add(p);
+				if(this.soluzioneAmmissibile( parziale, numAnni, numOre) == true) {
+					
+					cerca(parziale, livello+1, numAnni, numOre);
 					parziale.remove(p);
 				}
-			}
-		}
-		
 			
+		
+		
+			}
 			
 	}
 
 	private int calcolaPersone(List<PowerOutage> parziale) {
 	int contaPersone = 0;
+	
+	if(parziale != null) {
 		for(PowerOutage p : parziale) {
-			
 			contaPersone += p.getCustomers_affected();
-			
+		}
 		}
 		return contaPersone;
 	}
+	
 
-	private boolean soluzioneAmmissibile(PowerOutage daInserire, LinkedList<PowerOutage> parziale, int numAnni, int numOre) {
+	private boolean soluzioneAmmissibile(List<PowerOutage> parziale, int numAnni, int numOre) {
 		// TODO Auto-generated method stub
 		
 		
 		if(parziale.size()==0) { //qualsiasi prima aggiunta va bene
 			return true;
 		}
-			//salvare da qualche parte numAnni x capire se superi numAnni
+		
+		
 	
-		if(parziale.getLast().getAnno1() != daInserire.getAnno1()) {
-			contaAnni++;
-		}
-			
+		
 		for(PowerOutage pp : parziale) {
-			contaOre += pp.getMinutiBlackOut()/60;
-		}
 			
-		if(contaAnni>numAnni || contaOre > numOre) {
+			contaOre += pp.calcolaOre();
+		}
+		
+		if(parziale.get(parziale.size()-1).getEventBegan().getYear() - parziale.get(0).getEventBegan().getYear()> numAnni) {
+			
 			return false;
 		}
-		
-		
+			
+		if(contaOre > numOre) {
+			return false;
+		}
 		return true;
 	}
+	
 	
 	}
