@@ -4,8 +4,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 
-public class PowerOutage {
+public class PowerOutage { // implements Comparable <PowerOutage>
 	int id;
 	int event_type_id;
 	int tag_id;
@@ -18,8 +19,8 @@ public class PowerOutage {
 	//LocalTime eventHourBegan;
 	//LocalTime eventHourFinished;
 	int demand_loss;
-	
-
+	private int year;
+	private long duration;
 	
 
 
@@ -37,8 +38,11 @@ public PowerOutage(int id, int event_type_id, int tag_id, int area_id, int nerc_
 		this.customers_affected = customers_affected;
 		this.eventBegan = eventBegan;
 		this.eventFinished = eventFinished;
+		LocalDateTime temp = LocalDateTime.from(eventBegan);
+		this.duration =  temp.until(eventFinished, ChronoUnit.HOURS); 
 		//this.eventHourBegan = eventHourBegan;
 		//this.eventHourFinished = eventHourFinished;
+		this.year = this.eventBegan.getYear();
 		this.demand_loss = demand_loss;
 	}
 
@@ -238,43 +242,52 @@ public int getOreTotali() {
 		return true;
 	}
 	
+
 	
-	/*public int calcolaDifferenzaInMinuti(int meseI, int giorniI, int oreI, int minI, int meseF, int giorniF, int oreF, int minF){
-	int tot = 0;
-	LocalDateTime t;
-
-	if(meseI == meseF) {
-		if(giorniI == giorniF) {
-	//int giorni = (giorniF -giorniI);
-	int ore = oreF - oreI;
-	int min = ore*60+(minF - minI);
-	tot =  ore+ min;
-		}
-		else {
-			if(giorniI-giorniF == 1) { //sono 2 gg consecutivi
-				int ore = (24-oreI) +oreF;
-				int min = ore*60 + (60-minI); 
-			}
-			
-			}
-	}
-	else {
-		//considero tutti i mesi da 30 g
-		int giorni = (30-giorniI) +(30-giorniF);
-		int h = giorni*24 + (oreF-oreI);
-		int m = h*60 + (minF-minI);
-		tot = m;
-	}
-	return tot;
-
-}
-
-public int getMinutiBlackOut(){
-return this.calcolaDifferenzaInMinuti();
-}*/
-
 	public String toString() {
-		return this.customers_affected+" "+eventBegan+" "+eventFinished + "\n";
+		return this.year + " " + eventBegan + " " + eventFinished + " " + duration +" " + customers_affected+"\n";
 	}
+
+
+
+
+
+	public int getYear() {
+		return year;
+	}
+
+
+
+
+
+	public void setYear(int year) {
+		this.year = year;
+	}
+
+
+
+
+
+	public long getDuration() {
+		return duration;
+	}
+
+
+
+
+
+	public void setDuration(long duration) {
+		this.duration = duration;
+	}
+
+
+
+
+
+	/*@Override
+	public int compareTo(PowerOutage o) {
+		// TODO Auto-generated method stub
+		return this.getEventBegan().compareTo(o.getEventBegan());
+	}*/
 	
 }

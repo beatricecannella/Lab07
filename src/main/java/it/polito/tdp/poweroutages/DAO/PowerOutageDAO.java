@@ -45,6 +45,7 @@ public class PowerOutageDAO {
 		String sql = "SELECT * "
 				+ "FROM poweroutages "
 				+ "ORDER BY date_event_began ASC";
+			
 		List<PowerOutage> powerOutagesList = new ArrayList<>();
 
 		try {

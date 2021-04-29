@@ -5,10 +5,14 @@
 package it.polito.tdp.poweroutages;
 
 
+import java.util.List;
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import it.polito.tdp.poweroutages.DAO.PowerOutageDAO;
 import it.polito.tdp.poweroutages.model.Model;
 import it.polito.tdp.poweroutages.model.Nerc;
+import it.polito.tdp.poweroutages.model.PowerOutage;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
@@ -40,6 +44,18 @@ public class FXMLController {
     @FXML
     void doRun(ActionEvent event) {
     	txtResult.clear();
+    	String elenco = "";
+    	int numAnni = Integer.parseInt(this.txtYears.getText());
+    	int numOre = Integer.parseInt(this.txtHours.getText());
+    	Nerc n = this.cmbNerc.getValue();
+    	
+    	List<PowerOutage> lista = model.doRicorsione(numAnni, numOre, n);
+    	this.txtResult.appendText("Tot people affected: " + model.getPersoneColpite() + "\n");
+    	this.txtResult.appendText("Tot hours of outage: " + model.getTotOre() + "\n");
+    	for(PowerOutage p: lista) {
+    		elenco +=  p;
+    	}
+    	this.txtResult.appendText(elenco);
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete

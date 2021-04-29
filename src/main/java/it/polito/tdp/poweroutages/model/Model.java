@@ -2,6 +2,7 @@ package it.polito.tdp.poweroutages.model;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -12,9 +13,9 @@ public class Model {
 	PowerOutageDAO podao;
 	
 	List<PowerOutage> soluzioneOttima;
-	int personeColpite = 0;
-	int contaAnni = 0;
-	int contaOre = 0;
+	int totOre;
+	int personeColpite;
+	
 	List<PowerOutage> powerFiltrata;
 	
 	
@@ -32,8 +33,11 @@ public class Model {
 	}
 	
 	
+	
 	public List<PowerOutage> doRicorsione(int numAnni, int numOre, Nerc nerc){
 		soluzioneOttima = null;
+		personeColpite = 0;
+		totOre = 0;
 		List<PowerOutage> parziale = new ArrayList<PowerOutage>();
 		powerFiltrata = new ArrayList<>();
 		
@@ -43,51 +47,63 @@ public class Model {
 				powerFiltrata.add(p);
 			}
 		}
-		
-		
-	//	System.out.println(powerFiltrata);
-		cerca(parziale, 0, numAnni, numOre);
+	//	Collections.sort(powerFiltrata);
+		cerca(parziale, numAnni, numOre);
 		
 		return soluzioneOttima;
 	}
 	
 	
-	private void cerca(List<PowerOutage> parziale, int livello, int numAnni, int numOre){
-		//livello per noi è il numero di anni inseriti nella parziale
-		
-		// caso terminale
-		
-		if(livello == powerFiltrata.size()) {
-			return; //non ci sono piu powerOuages da aggiungere
-			}
-		
-		/*if(this.contaOre(parziale)>numOre) {
-			return;
-		}else {*/
-		 personeColpite = this.calcolaPersone(parziale);
+	private void cerca(List<PowerOutage> parziale, int numAnni, int numOre){
+	
+		// caso terminale	
+	
 			
-			if(parziale == null || personeColpite > this.calcolaPersone(soluzioneOttima)) {
+			if(this.calcolaPersone(parziale) > personeColpite) {
+				personeColpite = this.calcolaPersone(parziale);
+				totOre = this.sommaOre(parziale);
 				soluzioneOttima = new ArrayList<>(parziale);
 				
-			
 			}
-	//	}
+
 	
 			for(PowerOutage p : this.powerFiltrata) {
-				parziale.add(p);
-				if(this.soluzioneAmmissibile( parziale, numAnni, numOre) == true) {
-					
-					cerca(parziale, livello+1, numAnni, numOre);
-					parziale.remove(p);
+				if(!parziale.contains(p)) {
+					parziale.add(p);
+				if(this.soluzioneAmmissibile(parziale, numAnni, numOre) == true) {
+					cerca(parziale, numAnni, numOre);
+						}
+				 parziale.remove(p);
 				}
-			
-		
-		
-			}
-			
-	}
+			}	
+		}
 
-	private int calcolaPersone(List<PowerOutage> parziale) {
+
+	private boolean soluzioneAmmissibile(List<PowerOutage> parziale, int numAnni, int numOre) {
+		
+		
+		if(parziale.get(parziale.size()-1).getYear() - parziale.get(0).getYear() +1 > numAnni) {
+			return false;
+			}
+		
+		if(this.sommaOre(parziale) > numOre) {
+			return false;
+			}
+		
+		return true;
+	
+	}
+	
+	public int sommaOre(List<PowerOutage> parziale) {
+		int contaOre = 0;
+		for(PowerOutage pp : parziale) {
+				contaOre += pp.getDuration();
+			}
+		return contaOre;
+	}
+	
+	
+	public int calcolaPersone(List<PowerOutage> parziale) {
 	int contaPersone = 0;
 	
 	if(parziale != null) {
@@ -95,36 +111,27 @@ public class Model {
 			contaPersone += p.getCustomers_affected();
 		}
 		}
-		return contaPersone;
+	return contaPersone;
 	}
-	
 
-	private boolean soluzioneAmmissibile(List<PowerOutage> parziale, int numAnni, int numOre) {
-		// TODO Auto-generated method stub
-		
-		
-		if(parziale.size()==0) { //qualsiasi prima aggiunta va bene
-			return true;
-		}
-		
-		
-	
-		
-		for(PowerOutage pp : parziale) {
-			
-			contaOre += pp.calcolaOre();
-		}
-		
-		if(parziale.get(parziale.size()-1).getEventBegan().getYear() - parziale.get(0).getEventBegan().getYear()> numAnni) {
-			
-			return false;
-		}
-			
-		if(contaOre > numOre) {
-			return false;
-		}
-		return true;
+	public int getPersoneColpite() {
+		return personeColpite;
 	}
+
+	public void setPersoneColpite(int personeColpite) {
+		this.personeColpite = personeColpite;
+	}
+
+	public int getTotOre() {
+		return totOre;
+	}
+
+	public void setTotOre(int totOre) {
+		this.totOre = totOre;
+	}
+	
+	
+	
 	
 	
 	}
